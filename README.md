@@ -20,7 +20,7 @@ frozen DNA seed approach.
 
 ## Pipeline
 
-![Pipeline](pipeline_visual_enhanced.png)
+![Pipeline](pipeline.png)
 
 ---
 
