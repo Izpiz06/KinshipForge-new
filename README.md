@@ -85,6 +85,11 @@ Note: Due to data privacy and storage constraints, this Kaggle dataset is curren
 
 Access Request: This dataset contains sensitive biometric-derived feature pools and is currently set to Private to comply with data privacy policies. Authorized researchers and evaluation committee members may request access by sending their Kaggle username to the project maintainer.
 
+## Contact
+For access requests or technical inquiries, please reach out via:
+- **Email:** [manaswimendhekar@gmail.com]
+- **GitHub:** [@MANASWI-MENDHEKAR](https://github.com/MANASWI-MENDHEKAR)
+
 Place at: `YOUR_DATASET/pool_50samples.pkl`
 
 ### 5. Run the Gradio UI
