@@ -272,7 +272,7 @@ def run_live_generation(father_img, mother_img, gender, race_f, race_m, seed_cho
 
     gc.collect()
     torch.cuda.empty_cache()
-    return best_results["5-10"], best_results["11-15"], best_results["16-21"], best_seed, round(best_lpips, 3)
+    return best_results["5-10"], best_results["11-15"], best_results["16-21"], best_seed, round(best_lpips, 3), best_results.get("brdas_logs", {})
 
 
 # ─────────────────────────────────────────────────────────
@@ -404,7 +404,7 @@ def step2_generate(father_img, mother_img, child_img, gender,
             if not race_f or not race_m:
                 return None, None, None, None, "Select father and mother race before generating.", ""
 
-            out_510, out_1115, out_1621, seed_used, lpips_age_val = run_live_generation(
+            out_510, out_1115, out_1621, seed_used, lpips_age_val, brdas_logs = run_live_generation(
                 father_img, mother_img, gender, race_f, race_m, seed_choice
             )
 
@@ -424,8 +424,20 @@ def step2_generate(father_img, mother_img, child_img, gender,
 
             note       = "Live · seed {} · gender: {} · races: {} × {}{}".format(
                 seed_used, gender, race_f, race_m, note_identity)
-            status_msg = "Generation complete. Seed: {}. LPIPS: {}. Races: {} × {}.".format(
-                seed_used, lpips_age_val, race_f, race_m)
+                
+            # Format BRDAS log string for UI dashboard
+            brdas_log_str = ""
+            if brdas_logs:
+                brdas_log_str = "\n\n--- BRDAS Demographic Region Logs ---"
+                for age, selections in brdas_logs.items():
+                    f_count = sum(1 for _, a in selections if a == "Father")
+                    m_count = sum(1 for _, a in selections if a == "Mother")
+                    brdas_log_str += f"\nAge {age} | Father regions: {f_count} | Mother regions: {m_count}"
+                    for reg, anc in selections:
+                        brdas_log_str += f"\n  - {reg}: {anc}"
+            
+            status_msg = "Generation complete. Seed: {}. LPIPS: {}. Races: {} × {}.{}".format(
+                seed_used, lpips_age_val, race_f, race_m, brdas_log_str)
             if not has_child:
                 note += " · upload real child photo to compute SSIM"
 
