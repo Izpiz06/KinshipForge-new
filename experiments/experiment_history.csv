@@ -1,0 +1,2 @@
+timestamp,experiment_name,git_commit,config_hash,random_seed,parents,child_age,child_gender,gamma,eta,arcs_lambda,father_weight,mother_weight,mix_mode,crossover_mode,mutation_mode,status,metrics,decision,notes
+2026-07-13T10:56:22.954519,test_logger,cb058e09,9ae41fc6141a,42,"{""father"": ""father_p1.jpg"", ""mother"": ""mother_p1.jpg""}",5-10,male,0.47,0.4,0.0,0.5,0.5,fixed_50_50,rfg_linear,brdas,running,{},,

@@ -43,74 +43,74 @@ PHOTOS_BASE  = "/kaggle/input/datasets/YOUR_DATASET/locked-7-pairs"
 # 2. PRE-CACHED PAIRS — updated confirmed metrics
 # ─────────────────────────────────────────────────────────
 CACHED_PAIRS = {
-    "p1 — Shahrukh + Gauri (Indian × Indian)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p1.jpg",
         "mother":  PHOTOS_BASE + "/mother_p1.jpg",
         "child":   PHOTOS_BASE + "/child_p1.png",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p1_shahrukh_gauri_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p1_shahrukh_gauri_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p1_shahrukh_gauri_16-21.png"},
-        "metrics": {"ssim": 0.305, "lpips_age": 0.249, "identity": 0.572},
+        "metrics": {"ssim": 0.3056, "lpips_age": 0.2466, "identity": 0.572},
         "gender": "male", "race_f": "Indian", "race_m": "Indian",
     },
-    "p2 — Jackie + Joan (East Asian × East Asian)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p2.jpg",
         "mother":  PHOTOS_BASE + "/mother_p2.jpeg",
         "child":   PHOTOS_BASE + "/child_p2.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p2_jackie_joan_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p2_jackie_joan_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p2_jackie_joan_16-21.png"},
-        "metrics": {"ssim": 0.258, "lpips_age": 0.312, "identity": 0.326},
+        "metrics": {"ssim": 0.2578, "lpips_age": 0.3065, "identity": 0.326},
         "gender": "male", "race_f": "East Asian", "race_m": "East Asian",
     },
-    "p3 — Obama + Michelle (Black × Black)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p3.jpg",
         "mother":  PHOTOS_BASE + "/mother_p3.jpeg",
         "child":   PHOTOS_BASE + "/child_p3.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p3_obama_michelle_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p3_obama_michelle_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p3_obama_michelle_16-21.png"},
-        "metrics": {"ssim": 0.272, "lpips_age": 0.276, "identity": 0.475},
+        "metrics": {"ssim": 0.272, "lpips_age": 0.2699, "identity": 0.475},
         "gender": "female", "race_f": "Black", "race_m": "Black",
     },
-    "p4 — Tom Hanks + Rita (White × White)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p4.jpg",
         "mother":  PHOTOS_BASE + "/mother_p4.jpg",
         "child":   PHOTOS_BASE + "/child_p4.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p4_tomhanks_rita_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p4_tomhanks_rita_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p4_tomhanks_rita_16-21.png"},
-        "metrics": {"ssim": 0.354, "lpips_age": 0.232, "identity": 0.269},
+        "metrics": {"ssim": 0.3535, "lpips_age": 0.2291, "identity": 0.269},
         "gender": "male", "race_f": "White", "race_m": "White",
     },
-    "p5 — Ben + Laura (Black × White)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p5.jpg",
         "mother":  PHOTOS_BASE + "/mother_p5.jpg",
         "child":   PHOTOS_BASE + "/child_p5.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p5_ben_laura_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p5_ben_laura_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p5_ben_laura_16-21.png"},
-        "metrics": {"ssim": 0.230, "lpips_age": 0.249, "identity": 0.431},
+        "metrics": {"ssim": 0.2342, "lpips_age": 0.2148, "identity": 0.431},
         "gender": "female", "race_f": "Black", "race_m": "White",
     },
-    "p6 — Tiger + Elin (Black × White)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p6.jpg",
         "mother":  PHOTOS_BASE + "/mother_p6.jpg",
         "child":   PHOTOS_BASE + "/child_p6.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p6_tiger_elin_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p6_tiger_elin_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p6_tiger_elin_16-21.png"},
-        "metrics": {"ssim": 0.251, "lpips_age": 0.192, "identity": 0.325},
+        "metrics": {"ssim": 0.2668, "lpips_age": 0.2197, "identity": 0.325},
         "gender": "female", "race_f": "Black", "race_m": "White",
     },
-    "p7 — Mark + Kelly (Latino × White)": {
+    "": {
         "father":  PHOTOS_BASE + "/father_p7.jpg",
         "mother":  PHOTOS_BASE + "/mother_p7.jpg",
         "child":   PHOTOS_BASE + "/child_p7.jpg",
         "outputs": {"5-10":  OUTPUTS_BASE + "/p7_mark_kelly_5-10.png",
                     "11-15": OUTPUTS_BASE + "/p7_mark_kelly_11-15.png",
                     "16-21": OUTPUTS_BASE + "/p7_mark_kelly_16-21.png"},
-        "metrics": {"ssim": 0.305, "lpips_age": 0.245, "identity": 0.350},
+        "metrics": {"ssim": 0.3286, "lpips_age": 0.1494, "identity": 0.35},
         "gender": "female", "race_f": "Latino_Hispanic", "race_m": "White",
     },
 }
