@@ -1,0 +1,60 @@
+# Research Outline: e4e Encoder Geometric Bias in KinshipForge
+
+## Topic
+**Root Cause Analysis of Facial Widening in KinshipForge: e4e Encoder FFHQ Prior vs Child Face Geometry**
+
+## Research Questions
+1. **RQ1**: What is the exact mathematical mechanism by which the e4e encoder + FFHQ latent_avg introduces facial widening?
+2. **RQ2**: How do adult (FFHQ) vs child facial proportions differ quantitatively in W+ space?
+3. **RQ3**: Which specific layers/channels of the encoder produce the geometric distortion?
+4. **RQ4**: Can the bias be corrected by latent_avg interpolation, encoder fine-tuning, or architectural changes?
+5. **RQ5**: What are the theoretical limits of encoder-based inversion for out-of-distribution age groups?
+
+## Items (Research Objects)
+
+### Category 1: Mathematical Analysis of e4e Encoder
+- item_1_1: "Encoder4Editing.forward() equation and latent_avg injection"
+- item_1_2: "PSP encoder architecture: feature pyramid + style mapper"
+- item_1_3: "Loss function: L2 + LPIPS + ID loss + latent_avg regularization"
+- item_1_4: "Gradient flow from generator back to encoder during training"
+- item_1_5: "W+ space geometry: covariance structure of FFHQ latent codes"
+
+### Category 2: FFHQ Dataset Bias Analysis
+- item_2_1: "FFHQ age distribution: mean, std, skew, kurtosis"
+- item_2_2: "FFHQ facial landmark statistics: jaw width, cheek width, face height by age"
+- item_2_3: "latent_avg (w_avg) facial geometry: decode and measure"
+- item_2_4: "Principal components of W+ space: which PCs control face width vs height"
+- item_2_5: "Age progression in W+ space: trajectory from child to adult"
+
+### Category 3: Child vs Adult Facial Geometry
+- item_3_1: "Morphometric differences: child (5-10) vs adult (20-40) facial proportions"
+- item_3_2: "Craniofacial growth patterns: mandibular vs maxillary growth rates"
+- item_3_3: "Landmark ratios that distinguish child vs adult faces"
+- item_3_4: "W+ codes for child faces: how far from FFHQ latent_avg?"
+- item_3_5: "Encoder residual capacity: can encoder(x) cancel adult prior for child input?"
+
+### Category 4: Layer-wise Attribution
+- item_4_1: "Per-layer (0-17) contribution to face width/height in generator"
+- item_4_2: "Per-layer encoder feature map statistics for child vs adult inputs"
+- item_4_3: "Attribution: which encoder layers produce width-increasing residuals"
+- item_4_4: "Style mixing: early layers (0-7) vs geometry layers (8-11) vs texture (12-17)"
+- item_4_5: "Integrated gradients from W+ geometry to encoder parameters"
+
+### Category 5: Bias Correction Strategies
+- item_5_1: "latent_avg interpolation: w_avg_child = alpha * w_avg_ffhq + (1-alpha) * w_avg_child"
+- item_5_2: "Encoder fine-tuning on child face dataset (e.g., Morph, CACD, AgeDB)"
+- item_5_3: "Age-conditioned latent_avg: learn w_avg(age) instead of single vector"
+- item_5_4: "Residual encoder: train encoder to predict delta from age-conditional prior"
+- item_5_5: "Alternative inversion: PTI, ReStyle, HFGI, diffusion-based inversion"
+
+### Category 6: Theoretical Limits
+- item_6_1: "Information bottleneck: encoder capacity vs W+ dimensionality"
+- item_6_2: "Manifold distance: child faces off the FFHQ manifold in W+ space"
+- item_6_3: "Inversion error lower bound: distortion vs editability tradeoff"
+- item_6_4: "Generator as implicit prior: can G synthesize children without encoder bias?"
+- item_6_5: "Causal analysis: is widening from encoder, generator, or their interaction?"
+
+## Execution Config
+- n_parallel_agents: 3
+- output_dir: "./e4e_geometric_bias_research/results"
+- detail_level: "detailed"

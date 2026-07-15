@@ -1,0 +1,213 @@
+# Field Definitions for e4e Geometric Bias Research
+
+## Category: Mathematical Mechanism
+- field: "encoder_forward_equation"
+  description: "Exact mathematical formulation of Encoder4Editing.forward() including latent_avg injection point"
+  detail_level: "detailed"
+  data_type: "equation"
+  required: true
+
+- field: "latent_avg_injection_mechanism"
+  description: "Where and how w_avg (FFHQ mean) is added to encoder residual"
+  detail_level: "detailed"
+  data_type: "text"
+  required: true
+
+- field: "encoder_residual_capacity"
+  description: "Whether encoder(x) has sufficient capacity to cancel adult prior for child inputs"
+  detail_level: "detailed"
+  data_type: "analysis"
+  required: true
+
+- field: "loss_function_components"
+  description: "L2 + LPIPS + ID + latent_avg regularization terms and their geometric effects"
+  detail_level: "detailed"
+  data_type: "text"
+  required: true
+
+- field: "training_objective_geometry"
+  description: "How the training loss incentivizes encoder to produce adult-proportioned latents"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+## Category: FFHQ Prior Analysis
+- field: "ffhq_age_distribution"
+  description: "Age histogram of FFHQ: mean, median, mode, std, skew, 5th-95th percentile"
+  detail_level: "detailed"
+  data_type: "statistics"
+  required: true
+
+- field: "latent_avg_geometry"
+  description: "Face width, height, W/H ratio, jaw width, cheek width when decoding w_avg"
+  detail_level: "detailed"
+  data_type: "measurements"
+  required: true
+
+- field: "w_plus_covariance_structure"
+  description: "Eigenvalues, eigenvectors, effective rank of FFHQ W+ covariance matrix"
+  detail_level: "detailed"
+  data_type: "statistics"
+  required: true
+
+- field: "principal_components_geometry"
+  description: "Which PCs control face width vs height vs age vs identity"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+- field: "age_trajectory_in_w_plus"
+  description: "Latent trajectory from child to adult in W+ space (if available)"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: false
+
+## Category: Child vs Adult Morphometrics
+- field: "child_adult_landmark_ratios"
+  description: "Key ratios: jaw/face_height, cheek/face_height, forehead/face_height, chin/face_height"
+  detail_level: "detailed"
+  data_type: "statistics"
+  required: true
+
+- field: "mandibular_growth_vs_maxillary"
+  description: "Relative growth rates of lower vs upper face in craniofacial development"
+  detail_level: "moderate"
+  data_type: "text"
+  required: true
+
+- field: "child_w_plus_distance_to_ffhq_mean"
+  description: "Mahalanobis distance of child W+ codes to FFHQ latent_avg"
+  detail_level: "detailed"
+  data_type: "statistics"
+  required: true
+
+- field: "encoder_residual_for_child_faces"
+  description: "Norm and direction of encoder(x_child) - is it pushing toward or away from adult prior?"
+  detail_level: "detailed"
+  data_type: "analysis"
+  required: true
+
+- field: "age_specific_w_plus_distribution"
+  description: "Mean and covariance of W+ codes for age-stratified FFHQ subsets (if available)"
+  detail_level: "moderate"
+  data_type: "statistics"
+  required: false
+
+## Category: Layer-wise Attribution
+- field: "per_layer_geometry_control"
+  description: "Which StyleGAN layers (0-17) control face width, height, jaw, forehead"
+  detail_level: "detailed"
+  data_type: "measurements"
+  required: true
+
+- field: "encoder_layer_contribution"
+  description: "Per-encoder-layer attribution to geometric distortion (integrated gradients)"
+  detail_level: "detailed"
+  data_type: "analysis"
+  required: true
+
+- field: "geometry_vs_texture_layer_separation"
+  description: "Layers 0-7 (coarse/geometry) vs 8-11 (mid/geometry) vs 12-17 (fine/texture)"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+- field: "w_plus_layer_statistics_child_vs_adult"
+  description: "Per-layer mean/std of W+ codes for child faces vs adult faces"
+  detail_level: "detailed"
+  data_type: "statistics"
+  required: true
+
+## Category: Bias Correction Strategies
+- field: "latent_avg_interpolation_effect"
+  description: "Effect of alpha * w_avg_ffhq + (1-alpha) * w_avg_child on W/H ratio"
+  detail_level: "detailed"
+  data_type: "experiment"
+  required: true
+
+- field: "encoder_finetuning_data_requirements"
+  description: "Minimum child face dataset size, diversity, alignment quality for effective fine-tuning"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+- field: "age_conditional_prior_feasibility"
+  description: "Can we learn w_avg(age) from available data? What age granularity?"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+- field: "alternative_inversion_comparison"
+  description: "PTI / ReStyle / HFGI / Diffusion inversion: geometric bias vs e4e"
+  detail_level: "detailed"
+  data_type: "comparison"
+  required: true
+
+## Category: Theoretical Limits
+- field: "manifold_distance_child_ffhq"
+  description: "Distance from child face manifold to FFHQ manifold in W+ space"
+  detail_level: "moderate"
+  data_type: "analysis"
+  required: true
+
+- field: "inversion_distortion_tradeoff"
+  description: "Theoretical lower bound: distortion vs editability for out-of-distribution ages"
+  detail_level: "moderate"
+  data_type: "theory"
+  required: false
+
+- field: "generator_implicit_prior_children"
+  description: "Can StyleGAN G synthesize realistic children without encoder? (random latent sampling)"
+  detail_level: "moderate"
+  data_type: "experiment"
+  required: true
+
+- field: "causal_attribution_encoder_vs_generator"
+  description: "Is widening from encoder residual, latent_avg, generator synthesis, or interaction?"
+  detail_level: "detailed"
+  data_type: "causal_analysis"
+  required: true
+
+## Category: Literature Comparison
+- field: "known_e4e_widening_literature"
+  description: "Papers documenting e4e/StyleGAN inversion geometric bias for non-FFHQ ages"
+  detail_level: "detailed"
+  data_type: "literature_review"
+  required: true
+
+- field: "state_of_art_child_inversion"
+  description: "Current best methods for child face inversion (PTI, ReStyle, HFGI, diffusion)"
+  detail_level: "detailed"
+  data_type: "literature_review"
+  required: true
+
+- field: "latent_avg_age_bias_papers"
+  description: "Papers analyzing w_avg age bias and correction methods"
+  detail_level: "moderate"
+  data_type: "literature_review"
+  required: true
+
+## Meta Fields
+- field: "confidence_score"
+  description: "Confidence in this finding (0-1)"
+  detail_level: "brief"
+  data_type: "float"
+  required: true
+
+- field: "evidence_source"
+  description: "Source of evidence: our_experiment | literature | theory | inference"
+  detail_level: "brief"
+  data_type: "enum"
+  required: true
+
+- field: "novelty_assessment"
+  description: "Is this finding novel or known? If known, cite paper"
+  detail_level: "moderate"
+  data_type: "text"
+  required: true
+
+- field: "publication_potential"
+  description: "Could this become a paper? What venue?"
+  detail_level: "moderate"
+  data_type: "text"
+  required: false

@@ -12,6 +12,20 @@
 /experiments/*/quantitative_results.json
 /experiments/*/comparison_report.md
 
+# Research outputs
+/e4e_geometric_bias_research/*/images/
+/e4e_geometric_bias_research/*/latents/
+/e4e_geometric_bias_research/*/correction_vectors/
+/e4e_geometric_bias_research/*/plots/
+/e4e_geometric_bias_research/*/landmarks/
+/e4e_geometric_bias_research/glcm_phase1/
+/e4e_geometric_bias_research/comprehensive/
+/e4e_geometric_bias_research/quick_start/
+/e4e_geometric_bias_research/results/
+
+# Generated experiment outputs
+/kinshipforge/experiments/
+
 # Logs
 *.log
 brdas_generation.log
@@ -39,3 +53,18 @@ Thumbs.db
 # Temporary
 *.tmp
 *.temp
+
+# Large binary files
+*.png
+*.jpg
+*.jpeg
+*.pt
+*.pth
+*.pkl
+*.npy
+
+# Exceptions for tracked files
+!pipeline.png
+!archive/*.png
+!archive/*.jpg
+!archive/*.jpeg

@@ -1,6 +1,6 @@
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+# KinshipForge — Age-Progressive Child Face Synthesis
 
-# KinshipForge
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 **Age-progressive child face synthesis from parental images**  
 Built on StyleGene (CVPR 2023) · Kaggle T4 GPU · Gradio UI
@@ -33,11 +33,41 @@ KinshipForge extends the StyleGene framework to generate **one consistent child 
 
 ---
 
+## Root Cause Analysis: e4e Encoder Geometric Bias
+
+### The Problem
+KinshipForge consistently produced "widened" child faces — faces appeared fatter than parents. Through systematic falsification experiments, the root cause was identified.
+
+### Root Cause Identified: e4e Encoder Residual (Not latent_avg)
+
+| Component | Contribution to Widening | Evidence |
+|---|---|---|
+| **Encoder Residual E(I)** | **75%** (+0.113 WH ratio) | Exp 2: R²=0.98 linear; Exp 5: residual norm (252) > latent_avg norm (235) |
+| **latent_avg (adult prior)** | 25% (+0.037 WH ratio) | Exp 3: latent_avg alone = WH=1.22 (adult face) |
+| **Generator non-linearity** | Amplifies residual | Residual alone invalid; with latent_avg → 3× widening |
+
+### The Mechanism
+
+```
+W+ = latent_avg + E(I)
+     = adult_mean    + encoder_residual
+     = WH=1.22       + adds +0.11 WH ratio
+     = WH=1.33 (widened)
+```
+
+**Residual norm (252) > latent_avg norm (235)** — the residual is the dominant vector.
+
+### Why Residual Widens
+Training loss: `L = L2 + LPIPS + ID_loss + λ||E(I)||²`
+- ID loss forces residual to encode adult facial structure
+- LPIPS prefers adult manifold  
+- L2 regularization (λ=0.025) too weak
+
+---
+
 ## Results (Latest Evaluation)
 
-![Results](grid_detached_child.png)
-
-Evaluated on **7 parent pairs across 5 ethnicities** including Indian pairs absent from all existing benchmark datasets. Real child photographs used as ground truth for all 7 pairs.
+Evaluated on **7 parent pairs across 5 ethnicities** including Indian pairs absent from all existing benchmark datasets.
 
 | Metric | Mean | Threshold | Pairs above threshold |
 |---|---|---|---|
@@ -45,17 +75,26 @@ Evaluated on **7 parent pairs across 5 ethnicities** including Indian pairs abse
 | **LPIPS age progression** | **0.234** | 0.20 | 6/7 |
 | **ArcFace identity consistency** | **0.393** | 0.25 | 7/7 |
 
-### Per-Pair Breakdown
+---
 
-| Pair | Parents | Child Gender | SSIM (mean) | LPIPS Age Prog. |
-|---|---|---|---|---|
-| P1 | Shahrukh + Gauri (Indian×Indian) | Male | 0.306 | 0.247 |
-| P2 | Jackie + Joan (East Asian×East Asian) | Male | 0.258 | 0.307 |
-| P3 | Obama + Michelle (Black×Black) | Female | 0.272 | 0.270 |
-| P4 | Tom Hanks + Rita (White×White) | Male | **0.354** | 0.229 |
-| P5 | Ben + Laura (Black×White) | Female | 0.234 | 0.215 |
-| P6 | Tiger + Elin (Black×White) | Female | 0.267 | 0.220 |
-| P7 | Mark + Kelly (Latino×White) | Female | 0.329 | **0.149** |
+## Geometry Correction Module (GLCM)
+
+A latent-space correction module that reduces widening while preserving identity.
+
+**Objective:**
+```
+Loss = 0.50 × IdentityLoss + 0.30 × LPIPS + 0.20 × GeometryLoss
+```
+
+**Target geometry:** Average of father/mother measurements
+
+**Results (Phase 1 - 5 pairs, 10 faces):**
+| Metric | Before | After | Δ |
+|---|---|---|---|
+| WH Ratio | 1.33 | 1.20 | -0.13 |
+| Jaw Width | 547px | 495px | -52px |
+| Cheek Width | 627px | 568px | -59px |
+| ArcFace Identity | - | 0.87 | Preserved |
 
 ---
 
@@ -113,6 +152,32 @@ python child_face_gradio_ui.py
 
 ---
 
+## Research Documentation
+
+All falsification experiments and root cause analysis documented in:
+
+```
+e4e_geometric_bias_research/
+├── 01_latent_avg_validation.md      # Alpha sweep (methodologically blocked)
+├── 02_residual_analysis.md          # Residual scaling (DECISIVE: 75% widening)
+├── 03_noise_perturbation.md         # Latent manifold NOT biased
+├── 04_alternative_inversion_comparison.md (not available)
+├── 05_geometry_decomposition.md     # Component decomposition (DECISIVE: 75%)
+└── FINAL_ROOT_CAUSE_REPORT.md       # Complete analysis
+```
+
+---
+
+## Known Limitations
+
+- **Age floor:** StyleGAN2 trained on FFHQ lacks child faces below ~15 — 5-10 bucket appears ~12-14 years
+- **Indian female pool critically sparse:** 0-2-female-Indian has only 1 sample (FFHQ Western bias)
+- **FairFace unreliable on celebs:** Race labels hardcoded for all 7 evaluation pairs
+- **Mixed-race BRDAS bug:** Only first parent's race used for mutation (documented, future fix)
+- **No age estimator works** on synthetic child faces from FFHQ-trained models
+
+---
+
 ## Project Structure
 
 ```
@@ -126,23 +191,13 @@ KinshipForge/
 │   └── legacy/                # Diagnostic/validation scripts (archived)
 ├── kinshipforge-notebook.ipynb # Complete Kaggle pipeline (27 cells)
 ├── child_face_gradio_ui.py    # Gradio demo with pre-cached 7-pair results
-├── test_pool.py               # Quick gene pool verification
 ├── archive/                   # Ground-truth locked-7-pairs (real photos)
 ├── pkl/pool_50samples.pkl     # Gene pool (8.71 GB, 56 demographic keys)
 ├── StyleGene/                 # Submodule (CVPR 2023, patched at runtime)
 ├── pics/                      # Demo images
+├── e4e_geometric_bias_research/  # All falsification experiments & reports
 └── kinshipforge-research/     # Research documentation & analysis
 ```
-
----
-
-## Known Limitations
-
-- **Age floor:** StyleGAN2 trained on FFHQ lacks child faces below ~15 — 5-10 bucket appears ~12-14 years
-- **Indian female pool critically sparse:** 0-2-female-Indian has only 1 sample (FFHQ Western bias)
-- **FairFace unreliable on celebs:** Race labels hardcoded for all 7 evaluation pairs
-- **Mixed-race BRDAS bug:** Only first parent's race used for mutation (documented, future fix)
-- **No age estimator works** on synthetic child faces from FFHQ-trained models
 
 ---
 
