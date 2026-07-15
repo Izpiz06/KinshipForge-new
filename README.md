@@ -173,7 +173,7 @@ e4e_geometric_bias_research/
 - **Age floor:** StyleGAN2 trained on FFHQ lacks child faces below ~15 — 5-10 bucket appears ~12-14 years
 - **Indian female pool critically sparse:** 0-2-female-Indian has only 1 sample (FFHQ Western bias)
 - **FairFace unreliable on celebs:** Race labels hardcoded for all 7 evaluation pairs
-- **Mixed-race BRDAS bug:** Only first parent's race used for mutation (documented, future fix)
+- **Notebook mix() regression:** Cell 10 patches `mix()` to 50/50 — the local `StyleGene/models/stylegene/gene_crossover_mutation.py` has the correct gender-biased 70/30 version
 - **No age estimator works** on synthetic child faces from FFHQ-trained models
 
 ---

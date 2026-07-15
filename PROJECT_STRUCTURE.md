@@ -1,62 +1,79 @@
 # KinshipForge — Project Structure & Reference
 
-**Last Updated:** 2026-07-13  
-**Version:** 1.0 (post-cleanup)
+**Last Updated:** 2026-07-15
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 KinshipForge-iz/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
+├── PROJECT_STRUCTURE.md
 ├── requirements.txt
-├── test_pool.py                          # Quick gene pool validation
-├── child_face_gradio_ui.py               # Gradio UI (Kaggle notebook compatible)
-├── kinshipforge-notebook.ipynb           # Main Kaggle notebook (25MB, all cells)
-├── grid_detached_child.png               # Results grid visualization
 ├── pipeline.png                          # Architecture diagram
+├── kinshipforge-notebook.ipynb           # Main Kaggle notebook (inference + evaluation)
 │
-├── archive/                              # Ground-truth locked evaluation pairs (7 pairs × 3 ages)
+├── archive/                              # Ground-truth locked evaluation pairs (7 pairs)
 │   ├── father_p{1-7}.jpg
 │   ├── mother_p{1-7}.jpg/.jpeg
 │   └── child_p{1-7}.jpg/.png
 │
 ├── pics/                                 # Demo/reference images
-│   └── (various stock/reference photos)
 │
-├── pkl/                                  # Gene pool data
+├── pkl/                                  # Gene pool data (ignored by git)
 │   ├── FairFace/                         # FairFace demographic splits
 │   ├── utk/                              # UTKFace demographic splits
 │   ├── pkdec.py                          # Pickle inspection utility
-│   └── pool_50samples.pkl                # 8.7 GB rebuilt FFHQ gene pool (56 keys, 100 samples/bucket)
+│   └── pool_50samples.pkl                # 8.7 GB rebuilt FFHQ gene pool (56 keys)
 │
-├── StyleGene/                            # Git submodule (CVI-SZU/StyleGene CVPR 2023)
+├── StyleGene/                            # CVPR 2023 StyleGene (locally patched, gitignored)
 │   ├── configs.py                        # Patched with local checkpoint paths
-│   ├── models/stylegene/                 # Core synthesis logic (patched at runtime)
-│   └── preprocess/align_images.py        # dlib face alignment
+│   ├── models/stylegene/
+│   │   ├── api.py                        # Patched (BRDAS, gender-biased mix)
+│   │   └── gene_crossover_mutation.py    # Patched (gender-biased mix, ARCS)
+│   └── preprocess/align_images.py
 │
 ├── kinshipforge/                         # Main Python package
-│   ├── __init__.py
 │   ├── metrics/
 │   │   ├── __init__.py
-│   │   └── core.py                       # SSIM, LPIPS, ArcFace, Geometry, Performance
+│   │   └── core.py                       # SSIM, LPIPS, ArcFace, Geometry
 │   └── experiments/
-│       ├── __init__.py
-│       ├── experiment_logger.py          # CSV experiment tracking with git hash
-│       ├── logger.py                     # Lightweight experiment logger
-│       └── 2026-07-13_*/                 # Auto-generated experiment runs
-│           ├── experiment_configuration.md
-│           ├── quantitative_results.json
-│           └── comparison_report.md
+│       ├── experiment_logger.py
+│       ├── logger.py
+│       └── 2026-07-13_*/                 # Experiment runs (config, results, reports)
 │
-├── scripts/                              # Runnable experiment scripts
-│   ├── ablation_mix.py                   # Layer mixing ablation (gender-biased)
-│   ├── validate_mix_fix.py               # Validation of gender-biased mixing fix
-│   └── legacy/                           # Archived diagnostic/validation scripts
-│       ├── run_diagnostics.py            # 10-phase root-cause analysis
+├── scripts/                              # Runnable scripts
+│   ├── stage1_e4e_inversion.py           # Pipeline stages (standalone)
+│   ├── stage2_w2sub_decomposition.py
+│   ├── stage3_regional_crossover.py
+│   ├── stage4_mutation.py
+│   ├── stage5_sub2w_reconstruction.py
+│   ├── stage6_stylegan_synthesis.py
+│   ├── exp1_alpha_sweep.py               # Falsification experiments
+│   ├── exp2_residual_analysis.py
+│   ├── exp3_noise_perturbation.py
+│   ├── exp5_geometry_decomposition.py
+│   ├── falsify_H1_w2sub.py              # Hypothesis falsification scripts
+│   ├── falsify_H2_sub2w.py
+│   ├── falsify_H3_jacobian.py
+│   ├── falsify_geometry_h0_h1.py
+│   ├── glcm_phase1_optimize.py          # Geometry correction module (WIP)
+│   ├── mix_ablation.py                  # Layer mixing ablation
+│   ├── validate_mix_fix.py              # Mixing validation
+│   ├── ablation_mix.py                  # Gender-biased mixing ablation
+│   ├── comprehensive_e4e_geometry_test.py
+│   ├── comprehensive_e4e_validation.py
+│   ├── geometry_preservation.py
+│   ├── layer_perturbation.py
+│   ├── pipeline_geometry_tracking.py
+│   ├── region_coupling.py
+│   ├── representation_analysis.py
+│   ├── w2sub_sub2w_invertibility.py
+│   └── legacy/                           # Archived diagnostic scripts
+│       ├── run_diagnostics.py
 │       ├── run_complete_diagnostics.py
 │       ├── run_complete_diagnostics_v2.py
 │       ├── run_validation_sweep.py
@@ -69,69 +86,62 @@ KinshipForge-iz/
 │       ├── geometry_utils.py
 │       └── download_ckpts.py
 │
-├── kinshipforge-research/
-│   └── results/                          # Research documentation (11 markdown files)
-│       ├── 01_stylegene_reverse_engineering.md
-│       ├── 02_facial_widening_root_cause.md
-│       ├── 03_latent_geometry_analysis.md
-│       ├── 04_kinshipforge_contributions_review.md
-│       ├── 05_brdas_theoretical_review.md
-│       ├── 06_arcs_theoretical_review.md
-│       ├── 07_literature_review.md
-│       ├── 08_evaluation_metrics.md
-│       ├── 09_future_architecture.md
-│       ├── 10_honest_assessment.md
-│       └── final_report.md
+├── e4e_geometric_bias_research/         # Root cause analysis (5 experiments)
+│   ├── 01_latent_avg_validation.md       # Alpha sweep (methodologically blocked)
+│   ├── 02_residual_analysis.md           # Residual scaling (DECISIVE: 75% widening)
+│   ├── 03_noise_perturbation.md          # Latent manifold NOT biased
+│   ├── 04_alternative_inversion_comparison.md
+│   ├── 05_geometry_decomposition.md      # Component decomposition (DECISIVE: 75%)
+│   ├── FINAL_ROOT_CAUSE_REPORT.md        # Complete analysis
+│   ├── fields.yaml / outline.yaml        # Research planning
+│   └── exp{1,2,3,5}_*/                  # Experiment data (JSON results)
 │
-├── docs/                                 # (Empty - reserved for future docs)
-└── experiments/                          # Root-level experiment history
-    ├── experiment_history.csv            # Master CSV log
-    └── 2026-07-13_10-56-22_test_logger/  # Sample run
+└── kinshipforge-research/               # Broader research documentation
+    └── results/
+        ├── 01_stylegene_reverse_engineering.md
+        ├── 02_facial_widening_root_cause.md
+        ├── 03_latent_geometry_analysis.md
+        ├── 04_kinshipforge_contributions_review.md
+        ├── 05_brdas_theoretical_review.md
+        ├── 06_arcs_theoretical_review.md
+        ├── 07_literature_review.md
+        ├── 08_evaluation_metrics.md
+        ├── 09_future_architecture.md
+        ├── 10_honest_assessment.md
+        └── final_report.md
 ```
 
 ---
 
-## 🔬 Key Components
+## Key Components
 
 ### 1. **Notebook Pipeline** (`kinshipforge-notebook.ipynb`)
-Complete Kaggle-ready inference pipeline:
-- **Cells 1-3:** Dependencies, StyleGene clone, checkpoint download (5 files → `/tmp/ckpt/`)
-- **Cell 4:** Config injection (Kaggle dataset paths)
-- **Cell 5:** **Architecture patching** — overwrites `api.py` & `gene_crossover_mutation.py` with KinshipForge contributions:
-  - Frozen DNA Seed (fixed crossover weights across age stages)
-  - LERP Bucket Blending (intermediate age genes)
-  - Gender-Biased Layer Fusion (70/30 at layers 8-11)
-  - ARCS (Adaptive Region-wise Crossover Scaling)
-  - BRDAS (Balanced Region-wise Dual-Ancestry Sampling)
-- **Cells 6-9:** Model init, gene pool load (8.7GB), FairFace init
-- **Cell 10:** e4e inversion sanity check
-- **Cell 12:** `full_pipeline()` — main inference function
-- **Cells 13-14:** Exploratory + Final generation (7 pairs, 3 ages each)
-- **Cell 16:** Quantitative evaluation (SSIM, LPIPS age progression)
-- **Cell 17:** Gradio UI launch
+Complete Kaggle-ready inference pipeline (32 cells):
+- **Cells 1-6:** Dependencies, StyleGene clone, checkpoint download, config injection
+- **Cells 10-11:** Architecture patching — overwrites `api.py` & `gene_crossover_mutation.py` with KinshipForge contributions
+- **Cells 12-15:** Model init, gene pool load, FairFace init, inversion test
+- **Cells 19-20:** `full_pipeline()` — main inference with BRDAS + gender-biased mix
+- **Cells 21-24:** Exploratory + Final generation (7 pairs, 3 ages each)
+- **Cells 25-27:** Quantitative evaluation (SSIM, LPIPS, ArcFace)
+- **Cells 28-29:** (removed — Gradio UI deleted in cleanup)
 
-### 2. **Gradio UI** (`child_face_gradio_ui.py`)
-- Standalone interface for manual testing
-- Pre-cached mode (loads `outputs_final/`) + Live generation mode
-- Auto seed selection (tries seeds 42, 123, 256 → picks max LPIPS age progression)
-- Manual race selection (FairFace unreliable on celebrity photos)
-- Metrics display: SSIM vs real child, LPIPS age progression, ArcFace identity consistency
-- **Fixed:** Type-based filtering in save loops (skips `brdas_logs` metadata)
+### 2. **Root Cause Analysis** (`e4e_geometric_bias_research/`)
+5 falsification experiments proving the e4e encoder residual accounts for **~75%** of facial widening (vs ~25% from latent_avg).
 
 ### 3. **Evaluation Metrics** (`kinshipforge/metrics/core.py`)
 | Metric | Purpose | Threshold |
 |--------|---------|-----------|
 | SSIM | Structural similarity to real child | ≥ 0.25 |
 | LPIPS (5-10 vs 16-21) | Visible age progression | ≥ 0.20 |
-| ArcFace Identity | Cross-age consistency (5-10 vs 16-21) | ≥ 0.25 |
+| ArcFace Identity | Cross-age consistency | ≥ 0.25 |
 | Geometry (MediaPipe) | Face width/height, jaw, cheek ratios | — |
 
 ---
 
-## 📊 Latest Evaluation Results (Notebook Cell 16)
+## Latest Evaluation Results
 
-| Pair | Mean SSIM | LPIPS Age Prog | Identity* |
-|------|-----------|----------------|-----------|
+| Pair | Mean SSIM | LPIPS Age Prog | ArcFace Identity |
+|------|-----------|----------------|-----------------|
 | p1 Shahrukh+Gauri (Indian×Indian) | **0.306** | 0.247 | 0.572 |
 | p2 Jackie+Joan (E.Asian×E.Asian) | 0.258 | **0.307** | 0.326 |
 | p3 Obama+Michelle (Black×Black) | 0.272 | 0.270 | 0.475 |
@@ -141,23 +151,11 @@ Complete Kaggle-ready inference pipeline:
 | p7 Mark+Kelly (Latino×White) | 0.329 | 0.149 | 0.350 |
 | **MEAN** | **0.288** | **0.234** | **0.393** |
 
-*Identity from Gradio UI cached metrics (ArcFace cosine similarity, 5-10 vs 16-21)
-
 **Thresholds:** SSIM≥0.25 (6/7), LPIPS≥0.20 (6/7), Identity≥0.25 (7/7)
 
 ---
 
-## 🧪 Experiment Scripts
-
-| Script | Purpose | Run Location |
-|--------|---------|--------------|
-| `scripts/validate_mix_fix.py` | Layer mixing ablation (5 pairs × 4 variants × 10 seeds) | Local GPU / Kaggle |
-| `scripts/ablation_mix.py` | Gender-biased mixing ablation with experiment logging | Local GPU / Kaggle |
-| `scripts/legacy/run_diagnostics.py` | 10-phase root-cause analysis (geometry drift, pool variance, BRDAS, StyleGAN prior) | Local GPU |
-
----
-
-## ⚙️ Required Checkpoints (download to `/tmp/ckpt/`)
+## Required Checkpoints (download to `/tmp/ckpt/`)
 
 | File | Source |
 |------|--------|
@@ -165,85 +163,63 @@ Complete Kaggle-ready inference pipeline:
 | `stylegan2-ffhq-config-f.pt` | HF: `wmpscc/StyleGene_CKPT` |
 | `stylegene_N18.ckpt` | HF: `wmpscc/StyleGene_CKPT` |
 | `res34_fair_align_multi_7_20190809.pt` | HF: `wmpscc/StyleGene_CKPT` |
-| `shape_predictor_68_face_landmarks.dat.bz2` | HF: `wmpscc/StyleGene_CKPT` (auto-decompressed) |
+| `shape_predictor_68_face_landmarks.dat.bz2` | HF: `wmpscc/StyleGene_CKPT` |
 
 ---
 
-## 🧬 Gene Pool
+## Gene Pool
 
 | File | Size | Keys | Description |
 |------|------|------|-------------|
-| `pkl/pool_50samples.pkl` | 8.7 GB | 56 | Rebuilt from FFHQ 70k, balanced by age×gender×race (100 samples/bucket where available) |
-| `pkl/FairFace/` | — | — | FairFace demographic splits for pool reconstruction |
-| `pkl/utk/` | — | — | UTKFace demographic splits for pool reconstruction |
+| `pkl/pool_50samples.pkl` | 8.7 GB | 56 | Rebuilt from FFHQ 70k, balanced by age×gender×race |
+| `pkl/FairFace/` | — | — | Demographic splits |
+| `pkl/utk/` | — | — | UTKFace splits |
 
-**Bucket scheme:** `0-2`, `3-9`, `10-19`, `20-29` × `male/female` × 7 races  
+**Bucket scheme:** `0-2`, `3-9`, `10-19`, `20-29` × `male/female` × 7 races
 **Age mapping:** `5-10→3-9`, `11-15→10-19`, `16-21→20-29`
 
 ---
 
-## 📝 Research Documentation
-
-Located in `kinshipforge-research/results/`:
-- **01-03:** Root cause analysis (StyleGene reverse engineering, facial widening, latent geometry)
-- **04:** KinshipForge contributions review
-- **05-06:** BRDAS & ARCS theoretical reviews
-- **07:** Literature review (kinship synthesis, age progression)
-- **08:** Evaluation methodology
-- **09:** Future architecture proposals
-- **10:** Honest assessment (limitations, failure modes)
-- **final_report.md:** Consolidated report
-
----
-
-## 🚀 Quick Start
-
-### Kaggle (Recommended)
-1. Upload `kinshipforge-notebook.ipynb` to Kaggle
-2. Enable **T4 GPU** + **Internet**
-3. Add datasets:
-   - `manaswimendhekar/stylegene-balanced-pool` (gene pool)
-   - `izpiz06/locked-7-pairs` (evaluation photos)
-   - `izpiz06/dataset-upgrade` (optional, for pool fortification)
-4. Run all cells sequentially
-5. Cell 17 launches Gradio UI at public URL
-
-### Local (Windows/Linux)
-```bash
-# Prerequisites
-pip install -r requirements.txt
-# Download checkpoints to C:/tmp/ckpt/ (or /tmp/ckpt/)
-# Place gene pool at pkl/pool_50samples.pkl
-
-# Run validation
-python scripts/validate_mix_fix.py
-
-# Run ablation
-python scripts/ablation_mix.py
-```
-
----
-
-## 🐛 Known Limitations
+## Known Limitations
 
 1. **Age floor:** StyleGAN2 trained on FFHQ (adult faces) → 5-10 bucket appears ~12-14 years
 2. **Indian female pool:** Critically sparse (0-2-female-Indian: 1 sample)
 3. **FairFace on celebs:** Unreliable → manual race labels hardcoded for 7 pairs
-4. **Mixed-race BRDAS:** Only first parent's race used for mutation (bug, documented)
-5. **No age estimator:** Works on synthetic child faces from FFHQ-trained models
+4. **No age estimator:** Works on synthetic child faces from FFHQ-trained models
+5. **Notebook mix() regression:** Cell 10 patched `mix()` uses 50/50 instead of the local StyleGene's 70/30 gender-biased fusion — see `StyleGene/models/stylegene/gene_crossover_mutation.py` for the correct version
 
 ---
 
-## 📜 License
+## Quick Start
+
+### Kaggle (Recommended)
+1. Upload `kinshipforge-notebook.ipynb` to Kaggle
+2. Enable **T4 GPU** + **Internet**
+3. Add datasets: `manaswimendhekar/stylegene-balanced-pool`, `izpiz06/locked-7-pairs`
+4. Run all cells sequentially
+
+### Local
+```bash
+pip install -r requirements.txt
+# Download checkpoints to /tmp/ckpt/
+# Place gene pool at pkl/pool_50samples.pkl
+
+# Run pipeline stage scripts:
+python scripts/stage1_e4e_inversion.py
+# or validation:
+python scripts/validate_mix_fix.py
+```
+
+---
+
+## License
 
 MIT — see `LICENSE`
 
 ---
 
-## 📬 Contact
+## Contact
 
-**Manaswi Mendhekar**  
-Research Intern, MIST Lab, IIT Bhilai  
-B.Tech CSE (AI), CSVTU Bhilai  
-Email: manaswimendhekar@gmail.com  
-GitHub: @MANASWI-MENDHEKAR
+**Manaswi Mendhekar** — manaswimendhekar@gmail.com — @MANASWI-MENDHEKAR
+Research Intern, MIST Lab, IIT Bhilai
+B.Tech CSE (AI), CSVTU Bhilai
