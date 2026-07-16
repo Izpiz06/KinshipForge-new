@@ -1,7 +1,5 @@
 # KinshipForge — Project Structure & Reference
 
-**Last Updated:** 2026-07-15
-
 ---
 
 ## Directory Structure
@@ -42,8 +40,7 @@ KinshipForge-iz/
 │   │   └── core.py                       # SSIM, LPIPS, ArcFace, Geometry
 │   └── experiments/
 │       ├── experiment_logger.py
-│       ├── logger.py
-│       └── 2026-07-13_*/                 # Experiment runs (config, results, reports)
+│       └── logger.py
 │
 ├── scripts/                              # Runnable scripts
 │   ├── stage1_e4e_inversion.py           # Pipeline stages (standalone)
@@ -60,7 +57,6 @@ KinshipForge-iz/
 │   ├── falsify_H2_sub2w.py
 │   ├── falsify_H3_jacobian.py
 │   ├── falsify_geometry_h0_h1.py
-│   ├── glcm_phase1_optimize.py          # Geometry correction module (WIP)
 │   ├── mix_ablation.py                  # Layer mixing ablation
 │   ├── validate_mix_fix.py              # Mixing validation
 │   ├── ablation_mix.py                  # Gender-biased mixing ablation
@@ -90,7 +86,6 @@ KinshipForge-iz/
 │   ├── 01_latent_avg_validation.md       # Alpha sweep (methodologically blocked)
 │   ├── 02_residual_analysis.md           # Residual scaling (DECISIVE: 75% widening)
 │   ├── 03_noise_perturbation.md          # Latent manifold NOT biased
-│   ├── 04_alternative_inversion_comparison.md
 │   ├── 05_geometry_decomposition.md      # Component decomposition (DECISIVE: 75%)
 │   ├── FINAL_ROOT_CAUSE_REPORT.md        # Complete analysis
 │   ├── fields.yaml / outline.yaml        # Research planning
@@ -100,7 +95,6 @@ KinshipForge-iz/
     └── results/
         ├── 01_stylegene_reverse_engineering.md
         ├── 02_facial_widening_root_cause.md
-        ├── 03_latent_geometry_analysis.md
         ├── 04_kinshipforge_contributions_review.md
         ├── 05_brdas_theoretical_review.md
         ├── 06_arcs_theoretical_review.md
@@ -117,13 +111,13 @@ KinshipForge-iz/
 
 ### 1. **Notebook Pipeline** (`kinshipforge-notebook.ipynb`)
 Complete Kaggle-ready inference pipeline (32 cells):
-- **Cells 1-6:** Dependencies, StyleGene clone, checkpoint download, config injection
-- **Cells 10-11:** Architecture patching — overwrites `api.py` & `gene_crossover_mutation.py` with KinshipForge contributions
-- **Cells 12-15:** Model init, gene pool load, FairFace init, inversion test
-- **Cells 19-20:** `full_pipeline()` — main inference with BRDAS + gender-biased mix
-- **Cells 21-24:** Exploratory + Final generation (7 pairs, 3 ages each)
-- **Cells 25-27:** Quantitative evaluation (SSIM, LPIPS, ArcFace)
-- **Cells 28-29:** (removed — Gradio UI deleted in cleanup)
+- **Cells 1-4:** Dependencies, StyleGene clone, checkpoint download, config injection
+- **Cell 5:** Architecture patching — overwrites `api.py` & `gene_crossover_mutation.py` with KinshipForge contributions (ARCS, BRDAS, gender-biased mix)
+- **Cells 6-9:** Model init, gene pool load, FairFace init, inversion test
+- **Cells 10-11:** `full_pipeline()` — main inference with BRDAS + gender-biased mix
+- **Cells 12-14:** Exploratory + Final generation (7 pairs, 3 ages each)
+- **Cells 15-17:** Quantitative evaluation (SSIM, LPIPS, ArcFace, DeepFace)
+- **Cells 18-19:** Gene pool fortification (batch extraction for dataset upgrade)
 
 ### 2. **Root Cause Analysis** (`e4e_geometric_bias_research/`)
 5 falsification experiments proving the e4e encoder residual accounts for **~75%** of facial widening (vs ~25% from latent_avg).
@@ -186,7 +180,6 @@ Complete Kaggle-ready inference pipeline (32 cells):
 2. **Indian female pool:** Critically sparse (0-2-female-Indian: 1 sample)
 3. **FairFace on celebs:** Unreliable → manual race labels hardcoded for 7 pairs
 4. **No age estimator:** Works on synthetic child faces from FFHQ-trained models
-5. **Notebook mix() regression:** Cell 10 patched `mix()` uses 50/50 instead of the local StyleGene's 70/30 gender-biased fusion — see `StyleGene/models/stylegene/gene_crossover_mutation.py` for the correct version
 
 ---
 
@@ -203,11 +196,7 @@ Complete Kaggle-ready inference pipeline (32 cells):
 pip install -r requirements.txt
 # Download checkpoints to /tmp/ckpt/
 # Place gene pool at pkl/pool_50samples.pkl
-
-# Run pipeline stage scripts:
 python scripts/stage1_e4e_inversion.py
-# or validation:
-python scripts/validate_mix_fix.py
 ```
 
 ---
@@ -223,3 +212,7 @@ MIT — see `LICENSE`
 **Manaswi Mendhekar** — manaswimendhekar@gmail.com — @MANASWI-MENDHEKAR
 Research Intern, MIST Lab, IIT Bhilai
 B.Tech CSE (AI), CSVTU Bhilai
+
+**Mohammad Izaan** — mdizaan1192@gmail.com — @MohammadIzaan
+Research Intern, MIST Lab, IIT Bhilai
+B.Tech CSE (IoT), SRM Institute of Science and Technology
