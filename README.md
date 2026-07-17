@@ -27,13 +27,13 @@ KinshipForge extends the StyleGene framework to generate **one consistent child 
 
 | Contribution | Description |
 |---|---|
-| **Frozen DNA Seed** | Fixes crossover weights (α, β) across all 3 age stages — same genetic blueprint, visible aging via pool variation |
-| **LERP Bucket Blending** | Linearly interpolates FFHQ pool age buckets to create intermediate age genes for each output stage |
-| **Gender-biased Layer Fusion** | 70/30 father/mother weighting on StyleGAN2 layers 8-17 for male, 30/70 for female — replaces paper's fixed 50/50 |
-| **ARCS** | Adaptive Region-wise Crossover Scaling — per-region gamma tuned by measured geometric sensitivity (0.0008–0.0432) to minimize facial widening |
-| **BRDAS** | Balanced Region-wise Dual-Ancestry Sampling — per-region coin-flip ancestry for mixed-race parents, with full logging |
-| **Multi-seed Selection** | Runs seeds [42, 123, 256], selects seed with maximum LPIPS age progression — improved mean LPIPS from 0.207 to 0.267 |
-| **Gene Pool Rebuild** | Rebuilt researchers' 27.8 GB inaccessible pool from FFHQ 70k — 56 keys, 100 samples/bucket, 8.71 GB |
+| **Frozen DNA Seed** | Fixes crossover weights across all 3 age stages — same genetic blueprint, visible aging via pool variation |
+| **LERP Bucket Blending** | Maps display ages (5-10, 11-15, 16-21) to nearest gene pool age buckets (3-9, 10-19, 20-29) |
+| **Gender-biased Layer Fusion** | 70/30 father/mother weighting on StyleGAN2 geometry layers (8-11) for male child, inverted for female — texture layers (12-17) stay 50/50 |
+| **ARCS** | Adaptive Region-sCal ed St — per-region mutation gamma tuned by measured geometric sensitivity (0.0008–0.0432) |
+| **BRDAS** | Balanced Region-wise Dual-Ancestry Sampling — per-region coin-flip ancestry for mixed-race parents with full logging |
+| **Multi-seed Selection** | Runs seeds [42, 123, 256], selects best via LPIPS age progression |
+| **Gene Pool Rebuild** | Rebuilt 8.11 GB FFHQ gene pool — 56 demographic keys, up to 100 samples/bucket |
 
 ---
 
@@ -93,8 +93,8 @@ Evaluated on **7 parent pairs across 5 ethnicities** including Indian pairs abse
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/MANASWI-MENDHEKAR/KinshipForge.git
-cd KinshipForge
+git clone https://github.com/Izpiz06/KinshipForge-new.git
+cd KinshipForge-new
 ```
 
 ### 2. Clone StyleGene and install dependencies
@@ -112,7 +112,7 @@ From [HuggingFace: wmpscc/StyleGene_CKPT](https://huggingface.co/wmpscc/StyleGen
 - `shape_predictor_68_face_landmarks.dat.bz2`
 
 ### 4. Download Gene Pool
-Custom rebuilt gene pool (8.71 GB):  
+Custom rebuilt gene pool (8.11 GB):  
 [Kaggle: manaswimendhekar/stylegene-balanced-pool](https://www.kaggle.com/datasets/manaswimendhekar/stylegene-balanced-pool)
 
 > **Note:** This Kaggle dataset is currently Private. Access can be granted to the evaluation committee upon request.
@@ -124,11 +124,10 @@ Custom rebuilt gene pool (8.71 GB):
 ### Kaggle Notebook (Recommended)
 Upload `kinshipforge-notebook.ipynb` to Kaggle with **T4 GPU** + **Internet** enabled.
 
-| Dataset | Path |
+| Dataset | Kaggle Path |
 |---|---|
-| Parent/child photos | `YOUR_DATASET/locked-7-pairs/` |
-| Gene Pool | `YOUR_DATASET/stylegene-balanced-pool/pool_50samples.pkl` |
-| FFHQ 70k thumbnails | `YOUR_DATASET/ffhq-face-data-set/thumbnails128x128/` |
+| Parent/child photos | `manaswimendhekar/locked-7-pairs/` |
+| Gene Pool | `manaswimendhekar/stylegene-balanced-pool/pool_50samples.pkl` |
 
 The notebook handles all setup: cloning StyleGene, downloading checkpoints, patching architecture, running inference, and evaluating results.
 
@@ -137,17 +136,16 @@ The notebook handles all setup: cloning StyleGene, downloading checkpoints, patc
 ## Project Structure
 
 ```
-KinshipForge/
-├── kinshipforge-notebook.ipynb     # Main Kaggle notebook (32 cells)
-├── requirements.txt                # Python dependencies
+KinshipForge-new/
+├── kinshipforge-notebook.ipynb     # Main Kaggle notebook (32 cells, 20 code + 12 markdown)
 ├── pipeline.png                    # Architecture diagram
 │
-├── kinshipforge/                   # Core package
-│   ├── metrics/
-│   │   └── core.py                 # SSIM, LPIPS, ArcFace, Geometry metrics
-│   └── experiments/                # Experiment logger (CSV history)
+├── archive/                        # Ground-truth locked-7-pairs (real photos)
+│   ├── father_p{1-7}.jpg
+│   ├── mother_p{1-7}.jpg/.jpeg
+│   └── child_p{1-7}.jpg/.png
 │
-├── scripts/                        # Standalone pipeline & analysis scripts
+├── scripts/                        # Pipeline & analysis scripts
 │   ├── stage*_*.py                 # Pipeline stages 1-6
 │   ├── exp*_*.py                   # Falsification experiments 1-5
 │   ├── falsify_*.py                # Hypothesis falsification
@@ -155,15 +153,15 @@ KinshipForge/
 │   ├── validate_mix_fix.py         # Mixing validation
 │   └── legacy/                     # Archived diagnostic scripts
 │
-├── archive/                        # Ground-truth locked-7-pairs (real photos)
-│   ├── father_p{1-7}.jpg
-│   ├── mother_p{1-7}.jpg/.jpeg
-│   └── child_p{1-7}.jpg/.png
+├── kinshipforge/                   # Core package
+│   ├── metrics/
+│   │   └── core.py                 # SSIM, LPIPS, ArcFace, Geometry metrics
+│   └── experiments/                # Experiment logger (CSV history)
 │
 ├── e4e_geometric_bias_research/    # Root cause analysis (5 experiments)
-├── kinshipforge-research/          # Broader research documentation
+├── kinshipforge-research/          # Research documentation
 ├── pics/                           # Demo images
-├── pkl/                            # Gene pool (gitignored, download separately)
+├── pkl/                            # Gene pool (download separately, gitignored)
 └── StyleGene/                      # CVPR 2023 submodule (gitignored)
 ```
 
@@ -186,12 +184,30 @@ Additional research reports in `kinshipforge-research/results/` cover StyleGene 
 
 ---
 
+## Notebook Contents (32 cells)
+
+| Cell | Section | Description |
+|------|---------|-------------|
+| 1-2 | Dependencies | Install packages, clone StyleGene repo |
+| 3 | Checkpoints | Download 4 model weights + dlib landmarks |
+| 4-5 | Config & Patching | Write config, patch gene_crossover_mutation.py (ARCS) and api.py (BRDAS) |
+| 6-9 | Model Init | Load e4e, StyleGAN2, StyleGene mappers, 8.11 GB gene pool, FairFace |
+| 10-11 | Input Data | List photos, encode test + reconstruction verification |
+| 12 | Full Pipeline | Core inference: encode parents → loop 3 ages → crossover/ARCS/BRDAS → StyleGAN2 decode |
+| 13 | Exploratory | Run all 7 pairs with seed=42 for Multi-seed Selection analysis |
+| 14 | Final Generation | Locked best seeds per pair → definitive outputs saved to `./outputs_final/` |
+| 15-16 | Evaluation | LPIPS, SSIM, ArcFace kinship, DeepFace age metrics |
+| 19-20 | Pool Fortification | Encode new images and append to gene pool |
+
+---
+
 ## Known Limitations
 
 - **Age floor:** StyleGAN2 trained on FFHQ (adult faces) — 5-10 bucket appears ~12-14 years
 - **Indian female pool critically sparse:** 0-2-female-Indian has only 1 sample (FFHQ Western bias)
 - **FairFace unreliable on celebs:** Race labels hardcoded for all 7 evaluation pairs
 - **No age estimator works** on synthetic child faces from FFHQ-trained models
+- **8.11 GB gene pool** requires significant RAM (~16 GB free) to load
 
 ---
 
@@ -216,8 +232,6 @@ MIT — see `LICENSE`
 
 **Manaswi Mendhekar** — manaswimendhekar@gmail.com  
 Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE (AI), CSVTU Bhilai  
-GitHub: [@MANASWI-MENDHEKAR](https://github.com/MANASWI-MENDHEKAR)
 
 **Mohammad Izaan** — mdizaan1192@gmail.com  
-Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE (IoT), SRM Institute of Science and Technology  
-GitHub: [@MohammadIzaan](https://github.com/MohammadIzaan)
+Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE (IoT), SRM Institute of Science and Technology
