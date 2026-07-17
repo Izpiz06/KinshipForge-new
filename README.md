@@ -234,4 +234,4 @@ MIT — see `LICENSE`
 Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE (AI), CSVTU Bhilai  
 
 **Mohammad Izaan** — mdizaan1192@gmail.com  
-Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE (IoT), SRM Institute of Science and Technology
+Research Intern, MIST Lab, IIT Bhilai · B.Tech CSE, SRM Institute of Science and Technology
